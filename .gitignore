@@ -22,5 +22,6 @@
 # Generated files
 .idea
 .lift
+out
 .vscode
 *.iml
