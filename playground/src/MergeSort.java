@@ -1,6 +1,5 @@
 public class MergeSort {
     private static final int[] input = {7, 3, 4, 5, 1};
-    private static final int valToFind = 1;
 
     public static void main(String[] args) {
         System.out.println("Merge sort!!");
