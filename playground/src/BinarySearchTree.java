@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class BinarySearchTree {
     public class Node {
         private int key;
@@ -107,9 +111,10 @@ public class BinarySearchTree {
         } else return getFloor(key, current.left);
     }
 
-    public int rank(int key) {
+    public int getRank(int key) {
         if (root == null) return -1;
         return getRank(root, key, getSize(root));
+
     }
 
     private int getRank(Node current, int key, int incomingRank) {
@@ -136,6 +141,48 @@ public class BinarySearchTree {
         } else {
             return getNthRank(current.left, currentRank - 1, queryRank);
         }
+    }
+
+    public int getRangeCount(int lowKey, int highKey) {
+        Node lowNode = ceil(lowKey);
+        Node highNode = floor(highKey);
+        return getRank(highNode.key) - getRank(lowNode.key) + 1;
+    }
+
+    public int[] getNodesBetween(int lowKey, int highKey) {
+        Node lowNode = ceil(lowKey);
+        Node highNode = floor(highKey);
+
+        int lowRank = getRank(lowNode.key);
+        int highRank = getRank(highNode.key);
+
+        int[] nodeKeys = new int[highRank - lowRank + 1];
+        for (int i = lowRank, j = 0; i <= highRank; nodeKeys[j] = getNthRank(i).key, j++, i++) ;
+        return nodeKeys;
+    }
+
+    public int[] getNodesBetweenV2(int lowKey, int highKey) {
+        List<Node> nodeList = new ArrayList<>();
+        getNodesBetweenV2(lowKey, highKey, root, nodeList);
+        return nodeList.stream().mapToInt(obj -> obj.key).toArray();
+    }
+
+    public void getNodesBetweenV2(int lowKey, int highKey, Node currentNode, List<Node> result) {
+        if (currentNode == null) return;
+
+        if (isKeyBetween(currentNode.key, lowKey, highKey)) {
+            result.add(currentNode);
+            getNodesBetweenV2(lowKey, highKey, currentNode.left, result);
+            getNodesBetweenV2(lowKey, highKey, currentNode.right, result);
+        } else if (currentNode.key < lowKey) {
+            getNodesBetweenV2(lowKey, highKey, currentNode.right, result);
+        } else {
+            getNodesBetweenV2(lowKey, highKey, currentNode.left, result);
+        }
+    }
+
+    private boolean isKeyBetween(int givenKey, int lowKey, int highKey) {
+        return givenKey >= lowKey && givenKey <= highKey;
     }
 
     public static void main(String[] args) {
@@ -171,14 +218,14 @@ public class BinarySearchTree {
         System.out.println("Floor of 9: " + bst.floor(9));
 
         // Rank
-        System.out.println("Rank of 9: " + bst.rank(9));
-        System.out.println("Rank of 6: " + bst.rank(6));
-        System.out.println("Rank of 8: " + bst.rank(8));
-        System.out.println("Rank of 3: " + bst.rank(3));
-        System.out.println("Rank of 5: " + bst.rank(5));
-        System.out.println("Rank of 7: " + bst.rank(7));
-        System.out.println("Rank of 12: " + bst.rank(12));
-        System.out.println("Rank of 10: " + bst.rank(10));
+        System.out.println("Rank of 9: " + bst.getRank(9));
+        System.out.println("Rank of 6: " + bst.getRank(6));
+        System.out.println("Rank of 8: " + bst.getRank(8));
+        System.out.println("Rank of 3: " + bst.getRank(3));
+        System.out.println("Rank of 5: " + bst.getRank(5));
+        System.out.println("Rank of 7: " + bst.getRank(7));
+        System.out.println("Rank of 12: " + bst.getRank(12));
+        System.out.println("Rank of 10: " + bst.getRank(10));
 
         // Get Nth Rank
         System.out.println("Nth Rank of 1: " + bst.getNthRank(1));
@@ -189,6 +236,21 @@ public class BinarySearchTree {
         System.out.println("Nth Rank of 6: " + bst.getNthRank(6));
         System.out.println("Nth Rank of 7: " + bst.getNthRank(7));
         System.out.println("Nth Rank of 0: " + bst.getNthRank(8));
+
+        // Get Range Count
+        System.out.println("Range count between 7 and 9: " + bst.getRangeCount(7, 9));
+        System.out.println("Range count between 6 and 9: " + bst.getRangeCount(6, 9));
+        System.out.println("Range count between 6 and 10: " + bst.getRangeCount(6, 10));
+
+        // Get Nodes between two range
+        System.out.println("Nodes between 7 and 9: " + Arrays.toString(bst.getNodesBetween(7, 9)));
+        System.out.println("Nodes between 6 and 9: " + Arrays.toString(bst.getNodesBetween(6, 9)));
+        System.out.println("Nodes between 6 and 10: " + Arrays.toString(bst.getNodesBetween(6, 10)));
+
+        // Get Nodes between two range - V2
+        System.out.println("V2 - Nodes between 7 and 9: " + Arrays.toString(bst.getNodesBetweenV2(7, 9)));
+        System.out.println("V2 - Nodes between 6 and 9: " + Arrays.toString(bst.getNodesBetweenV2(6, 9)));
+        System.out.println("V2 - Nodes between 6 and 10: " + Arrays.toString(bst.getNodesBetweenV2(6, 10)));
 
     }
 }
