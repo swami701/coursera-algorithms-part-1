@@ -79,10 +79,6 @@ public class BinarySearchTree {
         return getMax(node.right);
     }
 
-    public Node get(int val) {
-
-        return null;
-    }
 
     public Node ceil(int key) {
         return getCeil(key, root);
@@ -116,29 +112,30 @@ public class BinarySearchTree {
         return getRank(root, key, getSize(root));
     }
 
-    private int getRank(Node current, int key, int cRank) {
+    private int getRank(Node current, int key, int incomingRank) {
         if (current == null) return -1;
-        int nRank = cRank - getSize(current.right);
-        if (key == current.key) return nRank;
-        else if (key > current.key) return getRank(current.right, key, nRank + getSize(current.right));
-        else return getRank(current.left, key, nRank - 1);
+        int currentRank = incomingRank - getSize(current.right);
+        if (key == current.key) return currentRank;
+        else if (key > current.key) return getRank(current.right, key, currentRank + getSize(current.right));
+        else return getRank(current.left, key, currentRank - 1);
     }
 
-    public Node getNthRank(int rank) {
+    public Node getNthRank(int queryRank) {
         if (root == null) return null;
-        return getNthRank(root, rank);
+        if (queryRank < 1 || queryRank > getSize(root)) return null;
+        return getNthRank(root, getSize(root), queryRank);
     }
 
-    private Node getNthRank(Node current, int rank) {
-        if (current == null) return null;
-        int rightRank = current.right == null ? 0 : current.right.size;
-        int currentRank = rank - rightRank;
-        if (currentRank == rank) {
+    private Node getNthRank(Node current, int incomingRank, int queryRank) {
+        if (current == null) return null; // Not possible
+        int currentRank = incomingRank - getSize(current.right);
+        if (currentRank == queryRank) {
             return current;
-        } else if (currentRank < rank) {
-            return getNthRank(current.right, currentRank + 1);
+        } else if (currentRank < queryRank) {
+            return getNthRank(current.right, currentRank + getSize(current.right), queryRank);
+        } else {
+            return getNthRank(current.left, currentRank - 1, queryRank);
         }
-        return null;
     }
 
     public static void main(String[] args) {
@@ -174,14 +171,25 @@ public class BinarySearchTree {
         System.out.println("Floor of 9: " + bst.floor(9));
 
         // Rank
-        System.out.println("Rank of 9: "+bst.rank(9));
-        System.out.println("Rank of 6: "+bst.rank(6));
-        System.out.println("Rank of 8: "+bst.rank(8));
-        System.out.println("Rank of 3: "+bst.rank(3));
-        System.out.println("Rank of 5: "+bst.rank(5));
-        System.out.println("Rank of 7: "+bst.rank(7));
-        System.out.println("Rank of 12: "+bst.rank(12));
-        System.out.println("Rank of 10: "+bst.rank(10));
+        System.out.println("Rank of 9: " + bst.rank(9));
+        System.out.println("Rank of 6: " + bst.rank(6));
+        System.out.println("Rank of 8: " + bst.rank(8));
+        System.out.println("Rank of 3: " + bst.rank(3));
+        System.out.println("Rank of 5: " + bst.rank(5));
+        System.out.println("Rank of 7: " + bst.rank(7));
+        System.out.println("Rank of 12: " + bst.rank(12));
+        System.out.println("Rank of 10: " + bst.rank(10));
+
+        // Get Nth Rank
+        System.out.println("Nth Rank of 1: " + bst.getNthRank(1));
+        System.out.println("Nth Rank of 2: " + bst.getNthRank(2));
+        System.out.println("Nth Rank of 3: " + bst.getNthRank(3));
+        System.out.println("Nth Rank of 4: " + bst.getNthRank(4));
+        System.out.println("Nth Rank of 5: " + bst.getNthRank(5));
+        System.out.println("Nth Rank of 6: " + bst.getNthRank(6));
+        System.out.println("Nth Rank of 7: " + bst.getNthRank(7));
+        System.out.println("Nth Rank of 0: " + bst.getNthRank(8));
+
     }
 }
 
