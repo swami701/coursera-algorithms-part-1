@@ -103,8 +103,8 @@ left -- 5       12
         if (node == null || node.left == null) return node;
         Node left = node.left;
         Node lRight = left.right;
-        node.left = lRight;
         left.right = node;
+        node.left = lRight;
         node.isRed = true;
         left.isRed = false;
         return left;
@@ -206,8 +206,8 @@ left -- 5       12
         if (current.key == key) {
             return current;
         } else if (current.key > key) {
-            if ((current.left != null && current.left.key > key)
-                    || (current.left != null && current.left.right != null && current.left.right.key > key)
+            if ((current.left != null && current.left.key >= key)
+                    || (current.left != null && current.left.right != null && current.left.right.key >= key)
             ) {
                 return ceil(key, current.left);
             } else {
@@ -227,8 +227,8 @@ left -- 5       12
         if (current.key == key) {
             return current;
         } else if (current.key < key) {
-            if ((current.right != null && current.right.key < key)
-                    || (current.right != null && current.right.left != null && current.right.left.key < key)
+            if ((current.right != null && current.right.key <= key)
+                    || (current.right != null && current.right.left != null && current.right.left.key <= key)
             ) {
                 return floor(key, current.right);
             } else {
@@ -260,7 +260,7 @@ left -- 5       12
         Node lNode = ceil(low);
         System.out.println("Ceil of " + low + " is :" + lNode.key);
         Node hNode = floor(high);
-        return getRank(hNode.key) - getRank(lNode.key) + 1;
+        return (getRank(hNode.key) - getRank(lNode.key)) + 1;
     }
 
     public Node[] getNodesBetween(int low, int high) {
@@ -268,7 +268,7 @@ left -- 5       12
         Node hNode = floor(high);
         int lRank = getRank(lNode.key);
         int hRank = getRank(hNode.key);
-        Node[] nodes = new Node[hRank - lRank + 1];
+        Node[] nodes = new Node[(hRank - lRank) + 1];
         for (int i = lRank, j = 0; i <= hRank; i++) {
             nodes[j++] = getNthRank(i);
         }
@@ -343,6 +343,11 @@ left -- 5       12
 }
 
 /*
+9, 5, 12, 3, 7, 10
 
-
+                9
+             //    \
+            5      12
+          /  \    //
+         3    7  10
  */
